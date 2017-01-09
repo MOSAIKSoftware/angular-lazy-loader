@@ -9,20 +9,11 @@
 			scope: true,
 			link: function(scope, element, attrs) {
 				var elements = [],
-					threshold = Number(attrs.threshold) || 0;
-
+					threshold = Number(attrs.threshold) || 0,
+          noInitOnLoad = attrs.initOnLoad === 'false' || false;
 				//gets all img(s), iframe(s) with the 'data-src' attribute and changes it to 'src'
-				function getElements() {
-
-					//fetch all image elements inside the current element
-					//fetch all iframe elements inside the current element
-					//fetch all divs inside the current element
-
+				function refreshElements() {
 					elements =  Array.prototype.slice.call(element[0].querySelectorAll('img[data-src], iframe[data-src], div[data-src]'));
-					//if images and videos were found call loadMedia
-					if(elements.length > 0 ) {
-						loadMedia();
-					}
 				}
 
 				//checks if element passed in the argument is inside the viewport. Returns a boolean value.
@@ -73,15 +64,18 @@
 					}, []);
 				};
 
-				getElements();
-
 				function reloadElements () {
-					$timeout(getElements, 0);
+          refreshElements();
+					$timeout(loadMedia, 0);
 				}
 
 				function reloadMedia ( ) {
 					$timeout(loadMedia, 0);
 				}
+        if ( !noInitOnLoad ) {
+          reloadElements();
+        }
+
 				//listens for partials loading events using ng-include
 				scope.$on('$includeContentLoaded', reloadElements);
 

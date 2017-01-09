@@ -43,6 +43,20 @@
 					<i><b>Edge Case:</b> Sometimes, <code>$scope.$emit('selectiveLoad')</code> may be fired before the lazy loader directive has been registered. In such a case, just wrap the <code>$emit</code> inside a <code>setTimeout</code> or <code>$timeout</code></i>
 				</div>
 			</section>
+      <section angular-lazy-load init-on-load="false">
+        We can specify if the images should be loaded on init...
+        <div class="center content-padding">
+          <div class="inline-block forty">
+            <img data-src="http://vignette2.wikia.nocookie.net/pokemon/images/b/b1/025Pikachu_XY_anime_3.png" alt="Click button to load...">
+          </div>
+          <div class="inline-block forty">
+            <button ng-click="load()">Load Programatically!</button>
+          </div>
+        </div>
+        <div class="content-padding">
+          <i><b>Edge Case:</b> Sometimes, <code>$scope.$emit('selectiveLoad')</code> may be fired before the lazy loader directive has been registered. In such a case, just wrap the <code>$emit</code> inside a <code>setTimeout</code> or <code>$timeout</code></i>
+        </div>
+      </section>
 			<section>
 				<h2>Lazy loading inside scrollable container</h2>
 				<p>Register the lazy loader directive on the scrollable container to lazy load assets when the container is scrolled instead of when the window is scrolled.</p>
