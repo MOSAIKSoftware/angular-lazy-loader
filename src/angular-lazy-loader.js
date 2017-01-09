@@ -36,15 +36,16 @@
 				    	);
 				};
         function preloadImg(item, src) {
-          return $q(function (resolve, reject) {
             var bgImg = new Image();
             var $item = item.innerHTML='<div class="preload"></div>';
+            item.style.opacity = 0.7;
+
             bgImg.onload = function(){
               item.innerHTML="";
-              resolve(src);
+              item.style.opacity = 1;
             };
             bgImg.src = src;
-          });
+            item.style.backgroundImage = "url("+src+")";
         }
 				//replaces 'data-src' with 'src' for the elements found.
 				function loadMedia() {
@@ -62,9 +63,7 @@
                 item.src = src;
 								break;
 							case "DIV":
-                preloadImg(item, src).then(function() {
-                  item.style.backgroundImage = "url("+src+")";
-                });
+                preloadImg(item, src);
 								break;
 							default:
 								arr.push(item);

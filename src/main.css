@@ -150,10 +150,12 @@ to {transform: rotate(360deg);}
   content: '';
   box-sizing: border-box;
   position: relative;
-  width: 20px !important;
-  height: 20px !important;
+  width: 20px;
+  height: 20px;
   left: 50%;
   top: 50%;
+  margin-left: -10px;
+  margin-top: -10px;
   border-radius: 50%;
   border: 2px solid #ccc;
   border-top-color: #333;
