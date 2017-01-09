@@ -1,7 +1,7 @@
 ;(function() {
 	"use strict"
 	var app = angular.module('angular-lazy-loader', [])
-	.directive('angularLazyLoad', ['$window', '$timeout', '$rootScope', function($window, $timeout, $rootScope) {
+	.directive('angularLazyLoad', ['$window', '$timeout', '$rootScope', '$q', function($window, $timeout, $rootScope, $q) {
 		return {
 			restrict: 'EA',
 
@@ -16,7 +16,7 @@
 
 					//fetch all image elements inside the current element
 					//fetch all iframe elements inside the current element
-					// fetch all divs inside the current element
+					//fetch all divs inside the current element
 
 					elements =  Array.prototype.slice.call(element[0].querySelectorAll('img[data-src], iframe[data-src], div[data-src]'));
 					//if images and videos were found call loadMedia
@@ -35,13 +35,23 @@
 				        	coordinates.right <= (window.innerWidth || document.documentElement.clientWidth)
 				    	);
 				};
-
+        function preloadImg(item, src) {
+          return $q(function (resolve, reject) {
+            var bgImg = new Image();
+            var $item = item.innerHTML='<div class="preload"></div>';
+            bgImg.onload = function(){
+              item.innerHTML="";
+              resolve(src);
+            };
+            bgImg.src = src;
+          });
+        }
 				//replaces 'data-src' with 'src' for the elements found.
 				function loadMedia() {
 					elements = elements.reduce(function ( arr, item ) {
 						var src = item.getAttribute("data-src");
 
-						if (!inViewPort ( item)) {
+						if (!inViewPort (item)) {
 							arr.push(item);
 							return arr;
 						}
@@ -49,10 +59,12 @@
 						switch(item.tagName) {
 							case "IMG":
 							case "IFRAME":
-								item.src = src;
+                item.src = src;
 								break;
 							case "DIV":
-								item.style.backgroundImage = "url("+src+")";
+                preloadImg(item, src).then(function() {
+                  item.style.backgroundImage = "url("+src+")";
+                });
 								break;
 							default:
 								arr.push(item);

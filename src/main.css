@@ -141,3 +141,21 @@ img {
 	width: 250px;
 	height: 250px;
 }
+
+@keyframes spinner {
+to {transform: rotate(360deg);}
+}
+
+.preload {
+  content: '';
+  box-sizing: border-box;
+  position: relative;
+  width: 20px !important;
+  height: 20px !important;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  border-top-color: #333;
+  animation: spinner .6s linear infinite;
+}
