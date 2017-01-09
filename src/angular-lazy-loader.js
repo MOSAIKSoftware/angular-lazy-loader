@@ -77,7 +77,7 @@
         }
 
 				//listens for partials loading events using ng-include
-				scope.$on('$includeContentLoaded', reloadElements);
+				//scope.$on('$includeContentLoaded', reloadElements);
 
 				//listens for selective loading, that is, if the developer using this directive wants to load the elements programmatically he can emit a selectiveLoad event
 				$rootScope.$on('selectiveLoad', reloadElements);
