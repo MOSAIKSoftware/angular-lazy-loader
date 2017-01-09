@@ -66,7 +66,7 @@
         var reloadTimer = null;
 				function reloadElements () {
           if ( reloadTimer) {
-            reloadTimer.cancel();
+            $timeout.cancel(reloadTimer);
           }
           reloadTimer = $timeout(function() {
             refreshElements();
