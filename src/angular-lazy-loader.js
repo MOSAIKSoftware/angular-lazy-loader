@@ -63,10 +63,15 @@
 						return arr;
 					}, []);
 				};
-
+        var reloadTimer = null;
 				function reloadElements () {
-          refreshElements();
-					$timeout(loadMedia, 0);
+          if ( reloadTimer) {
+            reloadTimer.cancel();
+          }
+          reloadTimer = $timeout(function() {
+            refreshElements();
+            loadMedia();
+          },100);
 				}
 
 				function reloadMedia ( ) {
@@ -77,7 +82,7 @@
         }
 
 				//listens for partials loading events using ng-include
-				//scope.$on('$includeContentLoaded', reloadElements);
+				scope.$on('$includeContentLoaded', reloadElements);
 
 				//listens for selective loading, that is, if the developer using this directive wants to load the elements programmatically he can emit a selectiveLoad event
 				$rootScope.$on('selectiveLoad', reloadElements);
