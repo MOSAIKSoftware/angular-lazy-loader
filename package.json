@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/tarun-dugar/angular-lazy-loader#readme",
   "devDependencies": {
-    "gulp": "^3.9.1"
+    "gulp": "^3.9.1",
+    "gulp-uglify": "^2.1.2"
   }
 }
