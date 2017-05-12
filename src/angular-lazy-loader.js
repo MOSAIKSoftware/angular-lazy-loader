@@ -17,7 +17,7 @@
 	}
 
 	var app = angular.module('angular-lazy-loader', [])
-	.directive('angularLazyLoad', ['$window', '$timeout', '$rootScope', function($window, $timeout, $rootScope) {
+	.directive('angularLazyLoad', ['$window', '$timeout', '$rootScope', '$q', function($window, $timeout, $rootScope, $q) {
 		return {
 			restrict: 'EA',
 
@@ -25,10 +25,10 @@
 			scope: true,
 			link: function(scope, element, attrs) {
 				var elements = [],
-					threshold = Number(attrs.threshold) || 0;
-
+					threshold = Number(attrs.threshold) || 0,
+          noInitOnLoad = attrs.initOnLoad === 'false' || false;
 				//gets all img(s), iframe(s) with the 'data-src' attribute and changes it to 'src'
-				function getElements() {
+				function refreshElements() {
 
 					//fetch all image elements inside the current element
 					//fetch all iframe elements inside the current element
@@ -51,7 +51,18 @@
 				        	coordinates.right <= (window.innerWidth || document.documentElement.clientWidth)
 				    	);
 				};
+        function preloadImg(item, src) {
+            var bgImg = new Image();
+            var $item = item.innerHTML='<div class="preload"></div>';
+            item.style.opacity = 0.7;
 
+            bgImg.onload = function(){
+              item.innerHTML="";
+              item.style.opacity = 1;
+            };
+            bgImg.src = src;
+            item.style.backgroundImage = "url("+src+")";
+        }
 				//replaces 'data-src' with 'src' for the elements found.
 				function loadMedia() {
 					elements = elements.reduce(function ( arr, item ) {
@@ -66,6 +77,7 @@
 						}
 
 						if ( !inViewPort ( item ) ) {
+
 							arr.push(item);
 							return arr;
 						}
@@ -95,16 +107,24 @@
 						return arr;
 					}, []);
 				};
-
-				getElements();
-
+        var reloadTimer = null;
 				function reloadElements () {
-					$timeout(getElements, 1);
+          if ( reloadTimer) {
+            $timeout.cancel(reloadTimer);
+          }
+          reloadTimer = $timeout(function() {
+            refreshElements();
+            loadMedia();
+          },100);
 				}
 
 				function reloadMedia ( ) {
 					$timeout(loadMedia, 1);
 				}
+        if ( !noInitOnLoad ) {
+          reloadElements();
+        }
+
 				//listens for partials loading events using ng-include
 				scope.$on('$includeContentLoaded', reloadElements);
 
