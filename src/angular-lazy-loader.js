@@ -1,5 +1,21 @@
 ;(function() {
 	"use strict"
+
+	function passiveOnScroll(elem, fn) {
+		// Test via a getter in the options object to see if the passive property is accessed
+		var supportsPassive = false;
+		try {
+  		var opts = Object.defineProperty({}, 'passive', {
+    		get: function() {
+      		supportsPassive = true;
+    		}
+  		});
+  		window.addEventListener("test", null, opts);
+		} catch (e) {}
+		// Use our detect's results. passive applied if supported, capture will be false either way.
+		elem.addEventListener('scroll', fn, supportsPassive ? { passive: true } : false); 
+	}
+
 	var app = angular.module('angular-lazy-loader', [])
 	.directive('angularLazyLoad', ['$window', '$timeout', '$rootScope', function($window, $timeout, $rootScope) {
 		return {
@@ -18,7 +34,7 @@
 					//fetch all iframe elements inside the current element
 					// fetch all divs inside the current element
 
-					elements =  Array.prototype.slice.call(element[0].querySelectorAll('img[data-src], iframe[data-src], div[data-src]'));
+					elements =  Array.prototype.slice.call(element[0].querySelectorAll('img[data-src], iframe[data-src], div[data-src], div[data-sized-src], img[data-sized-src]'));
 					//if images and videos were found call loadMedia
 					if(elements.length > 0 ) {
 						loadMedia();
@@ -40,19 +56,37 @@
 				function loadMedia() {
 					elements = elements.reduce(function ( arr, item ) {
 						var src = item.getAttribute("data-src");
+						var hasSize = false;
+						var sizedSrc = item.getAttribute("data-sized-src"); // when image sizes are know this path will be used
 
-						if ( !inViewPort ( item) ) {
+						var currentSrc = item.getAttribute("data-current-src");
+						
+						if ( src && currentSrc && src === currentSrc ) {
+							return arr;
+						}
+
+						if ( !inViewPort ( item ) ) {
 							arr.push(item);
 							return arr;
+						}
+						var height = item.clientHeight;
+						var width = item.clientWidth;
+						if ( sizedSrc && height && width ) {
+							//console.log(`D: ${height}x${width}`);
+
+							hasSize=true;
+							src = sizedSrc.replace("#height#", height).replace("#width#", width);
 						}
 
 						switch(item.tagName) {
 							case "IMG":
 							case "IFRAME":
-								item.src = src;
+								item.setAttribute("data-current-src", src)
+								item.src =  src;
 								break;
 							case "DIV":
 								item.style.backgroundImage = "url("+src+")";
+								item.setAttribute("data-current-src", src);
 								break;
 							default:
 								arr.push(item);
@@ -65,11 +99,11 @@
 				getElements();
 
 				function reloadElements () {
-					$timeout(getElements, 0);
+					$timeout(getElements, 1);
 				}
 
 				function reloadMedia ( ) {
-					$timeout(loadMedia, 0);
+					$timeout(loadMedia, 1);
 				}
 				//listens for partials loading events using ng-include
 				scope.$on('$includeContentLoaded', reloadElements);
@@ -78,13 +112,14 @@
 				$rootScope.$on('selectiveLoad', reloadElements);
 
 				//calls loadMedia for each window scroll event
-				angular.element($window).bind('scroll', reloadMedia);
+				//angular.element($window).bind('scroll', reloadMedia);
+				passiveOnScroll($window, reloadMedia);
 
 				//calls loadMedia for each window scroll event
 				angular.element($window).bind('resize', reloadMedia);
 
 				//calls loadMedia for each element scroll event
-				angular.element(element).bind('scroll', reloadMedia);
+				//angular.element(element).bind('scroll', reloadMedia);
 			}
 		}
 	}])
