@@ -65,7 +65,6 @@ var elements = [];
 				case "IMG":
 				case "IFRAME":
 					item.removeAttribute("data-src");
-					item.removeAttribute("data-sized-src");
 
 					item.setAttribute("data-current-src", src)
 					item.src = src;
@@ -73,7 +72,6 @@ var elements = [];
 				case "DIV":
 					preloadImg(item, src);
 					item.removeAttribute("data-src");
-					item.removeAttribute("data-sized-src");
 					item.setAttribute("data-current-src", src);
 					break;
 				default:
@@ -87,6 +85,9 @@ var elements = [];
 	// display preload image
 
 	function preloadImg(item, src) {
+		var newSrc = "url(" + src + ")";
+		if (item.style.backgroundImage === newSrc) return;
+
 		var bgImg = new Image();
 		var $item = item.innerHTML = '<div class="preload"></div>';
 		item.style.opacity = 0.7;
@@ -96,7 +97,7 @@ var elements = [];
 			item.style.opacity = 1;
 		};
 		bgImg.src = src;
-		item.style.backgroundImage = "url(" + src + ")";
+		item.style.backgroundImage = newSrc;
 	}
 
 	// scan for data-src
