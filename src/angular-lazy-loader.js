@@ -66,12 +66,15 @@
 				case "IMG":
 				case "IFRAME":
 					item.removeAttribute("data-src");
+					item.removeAttribute("data-sized-src");
+
 					item.setAttribute("data-current-src", src)
 					item.src = src;
 					break;
 				case "DIV":
 					preloadImg(item, src);
 					item.removeAttribute("data-src");
+					item.removeAttribute("data-sized-src");
 					item.setAttribute("data-current-src", src);
 					break;
 				default:
