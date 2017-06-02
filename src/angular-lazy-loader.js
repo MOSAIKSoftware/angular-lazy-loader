@@ -70,7 +70,7 @@
 					item.src = src;
 					break;
 				case "DIV":
-					item.style.backgroundImage = "url(" + src + ")";
+					preloadImg(item, src);
 					item.removeAttribute("data-src");
 					item.setAttribute("data-current-src", src);
 					break;
