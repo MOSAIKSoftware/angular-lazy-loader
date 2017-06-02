@@ -1,4 +1,6 @@
 ;
+var elements = [];
+
 (function () {
 	"use strict"
 
@@ -30,14 +32,11 @@
 		);
 	};
 
-	var elements = [];
 
 	//replaces 'data-src' with 'src' for the elements found.
 	function loadMedia() {
 		if (elements.length === 0) return;
-		console.dir(elements);
-		console.log("loadMedia...");
-
+	
 		elements = elements.reduce(function (arr, item) {
 			var src = item.getAttribute("data-src");
 			var hasSize = false;
