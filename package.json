@@ -2,7 +2,7 @@
   "name": "angular-lazy-loader",
   "version": "2.2.0",
   "description": "angularjs directive for lazy loading images, background images, and embedded videos",
-  "main": "src/angular-lazy-loader.min.js",
+  "main": "dist/angular-lazy-loader.js",
   "directories": {
     "example": "example"
   },
