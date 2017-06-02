@@ -108,6 +108,8 @@
 					}, []);
 				};
         var reloadTimer = null;
+				var reloadMediaTimer = null;
+
 				function reloadElements () {
           if ( reloadTimer) {
             $timeout.cancel(reloadTimer);
@@ -119,7 +121,10 @@
 				}
 
 				function reloadMedia ( ) {
-					$timeout(loadMedia, 1);
+					if ( reloadMediaTimer ) {
+						$timeout.cancel(reloadMediaTimer);
+					}
+					reloadMediaTimer = $timeout(loadMedia, 100);
 				}
         if ( !noInitOnLoad ) {
           reloadElements();
