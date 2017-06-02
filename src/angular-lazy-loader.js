@@ -1,6 +1,6 @@
 ;
 var elements = [];
-
+var loadedImages = [];
 (function () {
 	"use strict"
 
@@ -36,7 +36,7 @@ var elements = [];
 	//replaces 'data-src' with 'src' for the elements found.
 	function loadMedia() {
 		if (elements.length === 0) return;
-	
+
 		elements = elements.reduce(function (arr, item) {
 			var src = item.getAttribute("data-src");
 			var hasSize = false;
@@ -64,14 +64,11 @@ var elements = [];
 			switch (item.tagName) {
 				case "IMG":
 				case "IFRAME":
-					item.removeAttribute("data-src");
-
 					item.setAttribute("data-current-src", src)
 					item.src = src;
 					break;
 				case "DIV":
 					preloadImg(item, src);
-					item.removeAttribute("data-src");
 					item.setAttribute("data-current-src", src);
 					break;
 				default:
@@ -88,16 +85,21 @@ var elements = [];
 		var newSrc = "url(" + src + ")";
 		if (item.style.backgroundImage === newSrc) return;
 
-		var bgImg = new Image();
-		var $item = item.innerHTML = '<div class="preload"></div>';
-		item.style.opacity = 0.7;
+		if (loadedImages.indexOf(src) === -1) {
+			var bgImg = new Image();
+			var $item = item.innerHTML = '<div class="preload"></div>';
+			item.style.opacity = 0.7;
 
-		bgImg.onload = function () {
-			item.innerHTML = "";
-			item.style.opacity = 1;
-		};
-		bgImg.src = src;
-		item.style.backgroundImage = newSrc;
+			bgImg.onload = function () {
+				loadedImages.push(src);
+				item.innerHTML = "";
+				item.style.opacity = 1;
+			};
+			bgImg.src = src;
+			item.style.backgroundImage = newSrc;
+		} else {
+			item.style.backgroundImage = newSrc;
+		}
 	}
 
 	// scan for data-src
@@ -135,7 +137,6 @@ var elements = [];
 						}
 						reloadTimer = $timeout(function () {
 							refreshElements(element[0]);
-							loadMedia();
 						}, 100);
 					}
 

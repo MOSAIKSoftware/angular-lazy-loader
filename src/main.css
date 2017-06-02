@@ -7,6 +7,11 @@ h2 {
 	margin: 0;
 }
 
+preload {
+	background-color: red;
+	width: 100px;
+	height: 100px;
+}
 header {
 	background-color: #B1312E;
 	color: #fff;
