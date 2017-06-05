@@ -64,12 +64,11 @@ var loadedImages = [];
 			switch (item.tagName) {
 				case "IMG":
 				case "IFRAME":
-					item.setAttribute("data-current-src", src)
+					preloadImg(item, src);
 					item.src = src;
 					break;
 				case "DIV":
 					preloadImg(item, src);
-					item.setAttribute("data-current-src", src);
 					break;
 				default:
 					arr.push(item);
@@ -92,6 +91,7 @@ var loadedImages = [];
 
 			bgImg.onload = function () {
 				loadedImages.push(src);
+				item.setAttribute("data-current-src", src);
 				item.innerHTML = "";
 				item.style.opacity = 1;
 			};
